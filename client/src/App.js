@@ -18,13 +18,14 @@ const Rig = () => {
       )
   );
 };
+const remoteMouse = {x: 0, y: 0};
 const localMouse = {x: 0, y: 0};
 const MouseMoveListener = () => {
     const { mouse } = useThree();
     useFrame((state, delta) => {
-            if (localMouse.x != state.mouse.x || localMouse.y != state.mouse.y) {
-                localMouse.x = state.mouse.x;
-                localMouse.y = state.mouse.y;
+            if (remoteMouse.x != state.mouse.x || remoteMouse.y != state.mouse.y) {
+                remoteMouse.x = state.mouse.x;
+                remoteMouse.y = state.mouse.y;
                 socket.emit('mouse_move', state.mouse);
             }
         }
@@ -38,11 +39,15 @@ function Box(props) {
   const [hovered, hover] = useState(false)
   const [clicked, click] = useState(false)
   // Subscribe this component to the render-loop, rotate the mesh every frame
-/*  useFrame((state, delta) => {
-      ref.current.rotation.x = mouse.x;
-      ref.current.rotation.y = mouse.y;
+  useFrame((state, delta) => {
+      if (localMouse.x != state.mouse.x || localMouse.y != state.mouse.y) {
+          localMouse.x = state.mouse.x;
+          localMouse.y = state.mouse.y;
+          ref.current.rotation.x = mouse.x;
+          ref.current.rotation.y = mouse.y;
+      }
     }
-  );*/
+  );
   // Return the view, these are regular Threejs elements expressed in JSX
   return (
       <mesh

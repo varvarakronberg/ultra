@@ -77,7 +77,7 @@ io.on('connection', (socket) => {
         {
             //console.log(Date(), socket.id, 'mouse_move: ' + JSON.stringify(mouse));
             mouseState = mouse;
-            io.emit("remote_mouse_move", mouse)
+            socket.broadcast.emit("remote_mouse_move", mouse)
         }
 
     });
