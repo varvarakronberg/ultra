@@ -43,8 +43,8 @@ function Box(props) {
       if (localMouse.x != state.mouse.x || localMouse.y != state.mouse.y) {
           localMouse.x = state.mouse.x;
           localMouse.y = state.mouse.y;
-          ref.current.rotation.x = mouse.x;
-          ref.current.rotation.y = mouse.y;
+          ref.current.rotation.x = -mouse.y*3;
+          ref.current.rotation.y = mouse.x*3;
       }
     }
   );
@@ -109,7 +109,7 @@ function App() {
           <Canvas>
             <ambientLight />
             <pointLight position={[10, 10, 10]} />
-            <Box position={[-1.2, 0, 0]} rotation={[remoteMouse.x, remoteMouse.y, 0]} />
+            <Box position={[-1.2, 0, 0]} rotation={[-remoteMouse.y*3, remoteMouse.x*3, 0]} />
             <MouseMoveListener />
           </Canvas>
         </div>
