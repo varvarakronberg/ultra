@@ -29,7 +29,11 @@ export const DebouncedPicker = ({ color }) => {
     const [value, setValue] = useState(color);
     const debounceChangeTerm = useDebounce(value, 50);
     useEffect(
-        () => actions.shape_color_change(value),
+        () => {
+            if (debounceChangeTerm) {
+                actions.shape_color_change(value);
+            }
+        },
         [debounceChangeTerm] // Only call effect if debounced term changes
     );
     return <HexColorPicker color={remoteColor} onChange={setValue} />;

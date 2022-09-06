@@ -1,10 +1,20 @@
 import './App.css';
-import {Canvas} from '@react-three/fiber'
+import {Canvas, useFrame} from '@react-three/fiber'
 import {useSocketStore} from "./stores/socketStore";
 import {Box} from "./Box";
 import {Cursor} from "./Cursor";
 import {DebouncedPicker} from "./DebouncedPicker";
-import {MouseMoveListener} from "./MouseMoveListener";
+
+let localMouse = {x: 0, y: 0};
+const MouseMoveListener = () => {
+    const actions = useSocketStore((store) => store.actions);
+    useFrame((state, delta) => {
+            if (localMouse.x != state.mouse.x || localMouse.y != state.mouse.y) {
+                actions.mouse_move(state.mouse);
+            }
+        }
+    );
+}
 
 function App() {
     const remoteUsers = useSocketStore((store) => store.users);
@@ -20,7 +30,7 @@ function App() {
             <Box position={[0, 0, 0]} rotation={[-activeRemoteMouse.y*3, activeRemoteMouse.x*3, 0]} color={remoteShapeColor} />
             <MouseMoveListener />
               {remoteUsers?.filter(u => u.socketId !== localSocketId).map(user => {
-                  return  <Cursor mouse={user.mouseState} className="cursors-canvas" />
+                  return <Cursor key={user.socketId} mouse={user.mouseState} className="cursors-canvas" />
               })}
           </Canvas>
         </div>

@@ -19,10 +19,10 @@ export function Box(props) {
     // Return the view, these are regular Threejs elements expressed in JSX
     return (
         <mesh
-            {...props}
             ref={ref}
-            scale={2.5}
-        >
+            scale={2}
+            position={props.position}
+            rotation={props.rotation}>
             <boxGeometry args={[1, 1, 1]}/>
             <meshStandardMaterial color={props.color}/>
         </mesh>
