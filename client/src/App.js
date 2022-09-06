@@ -9,18 +9,10 @@ import { useState} from "react";
 let localMouse = {x: 0, y:0};
 const MouseMoveListener = () => {
     const actions = useSocketStore((store) => store.actions);
-    const remoteUsers = useSocketStore((store) => store.users);
-    const activeRemoteMouse = remoteUsers?.find(m => m.mouseState.active)?.mouseState ?? {x: 0, y:0, active:true};
     useFrame((state, delta) => {
-
-        if (activeRemoteMouse.x != state.mouse.x || activeRemoteMouse.y != state.mouse.y) {
-            actions.mouse_move(state.mouse);
-        }
-/*            if (remoteMouse.x != state.x || remoteMouse.y != state.y) {
-                //remoteMouse.x = state.mouse.x;
-                //remoteMouse.y = state.mouse.y;
-
-            }*/
+            if (localMouse.x != state.mouse.x || localMouse.y != state.mouse.y) {
+                actions.mouse_move(state.mouse);
+            }
         }
     );
 }
