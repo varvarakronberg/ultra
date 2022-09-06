@@ -61,11 +61,22 @@ for (var socketid in io.sockets.sockets) {}
 Object.keys(io.sockets.sockets).forEach((socketid) => {});
  */
 
-let mouseState = {x:0, y:0};
+let usersState = {};
 
 io.on('connection', (socket) => {
     console.log('a user connected');
+    if (Object.keys(usersState).length > 0)
+    {
+        let currentActiveSocketId = Object.keys(usersState).find(socketId => usersState[socketId].mouseState.active);
+        usersState[currentActiveSocketId].mouseState.active = false;
+    }
+    usersState[socket.id] = {mouseState:{x:0, y:0, active:true, color:'#'+(0x1000000+Math.random()*0xffffff).toString(16).substring(1,7)}};
     socket.on('disconnect', () => {
+        if (usersState[socket.id].mouseState.active && Object.keys(usersState).length > 1) {
+            let anotherSocketId = [...io.sockets.sockets].find(([sId, s]) => sId != socket.id)[0];
+            usersState[anotherSocketId].mouseState.active = true;
+        }
+        delete usersState[socket.id];
         console.log('user disconnected');
     });
     socket.on('ping', (msg) => {
@@ -73,14 +84,23 @@ io.on('connection', (socket) => {
         socket.broadcast.emit('pong');
     });
     socket.on('mouse_move', (mouse) => {
+        let mouseState = usersState[socket.id].mouseState;
         if (Math.abs(mouseState.x-mouse.x) >= 0.001 || Math.abs(mouseState.y-mouse.y) >= 0.001)
         {
-            //console.log(Date(), socket.id, 'mouse_move: ' + JSON.stringify(mouse));
-            mouseState = mouse;
-            socket.broadcast.emit("remote_mouse_move", mouse)
-        }
+            let currentActiveSocketId = Object.keys(usersState).find(socketId => usersState[socketId].mouseState.active);
+            usersState[currentActiveSocketId].mouseState.active = false;
 
+            usersState[socket.id].mouseState.x = mouse.x;
+            usersState[socket.id].mouseState.y = mouse.y;
+            usersState[socket.id].mouseState.active = true;
+            socket.broadcast.emit("remote_mouse_move", Object.values(usersState))
+        }
     });
+    socket.on('shape_color_change', (color) => {
+            console.log(Date(), socket.id, 'color: ' + JSON.stringify(color));
+            io.emit("remote_shape_color_change", color);
+
+    })
 });
 
 server.listen(port, () => {
@@ -92,7 +112,7 @@ app.use(function onError(err, req, res) {
     // The error id is attached to `res.sentry` to be returned
     // and optionally displayed to the user for support.
     res.statusCode = 500;
-    res.end(res.sentry + '\n');
+    //res.end(res.sentry + '\n');
 });
 
 
