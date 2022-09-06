@@ -6,6 +6,7 @@ import io from 'socket.io-client';
 const initialState = {
     connected: false,
     users: [],
+    serverSocketId: null,
     shape: {color: "#ffde01"}
 }
 const mutations = (setState, getState) => {
@@ -25,6 +26,9 @@ const mutations = (setState, getState) => {
         })
         .on("remote_shape_color_change", (color) => {
             setState({shape: {color:color}});
+        })
+        .on("assign_socket_id", (serverSocketId) => {
+            setState({serverSocketId: serverSocketId});
         });
 
     return {

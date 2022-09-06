@@ -65,12 +65,13 @@ let usersState = {};
 
 io.on('connection', (socket) => {
     console.log('a user connected');
+    socket.emit('assign_socket_id', socket.id);
     if (Object.keys(usersState).length > 0)
     {
         let currentActiveSocketId = Object.keys(usersState).find(socketId => usersState[socketId].mouseState.active);
         usersState[currentActiveSocketId].mouseState.active = false;
     }
-    usersState[socket.id] = {mouseState:{x:0, y:0, active:true, color:'#'+(0x1000000+Math.random()*0xffffff).toString(16).substring(1,7)}};
+    usersState[socket.id] = {mouseState:{x:0, y:0, active:true, color:'#'+(0x1000000+Math.random()*0xffffff).toString(16).substring(1,7)}, socketId: socket.id, isInitial:true};
     socket.on('disconnect', () => {
         if (usersState[socket.id].mouseState.active && Object.keys(usersState).length > 1) {
             let anotherSocketId = [...io.sockets.sockets].find(([sId, s]) => sId != socket.id)[0];
@@ -93,7 +94,8 @@ io.on('connection', (socket) => {
             usersState[socket.id].mouseState.x = mouse.x;
             usersState[socket.id].mouseState.y = mouse.y;
             usersState[socket.id].mouseState.active = true;
-            socket.broadcast.emit("remote_mouse_move", Object.values(usersState))
+            usersState[socket.id].isInitial = false;
+            socket.broadcast.emit("remote_mouse_move", Object.values(usersState).filter(u => !u.isInital));
         }
     });
     socket.on('shape_color_change', (color) => {
