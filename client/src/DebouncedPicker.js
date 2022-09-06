@@ -23,17 +23,13 @@ function useDebounce(value, delay) {
     return debouncedValue;
 }
 
-export const DebouncedPicker = ({ color, onChange }) => {
+export const DebouncedPicker = ({ color }) => {
     const actions = useSocketStore((store) => store.actions);
     const remoteColor = useSocketStore((store) => store.shape.color);
     const [value, setValue] = useState(color);
-const debounceChangeTerm = useDebounce(value, 200);
+    const debounceChangeTerm = useDebounce(value, 50);
     useEffect(
-        () => {
-            if (debounceChangeTerm) {
-                actions.shape_color_change(value);
-            }
-        },
+        () => actions.shape_color_change(value),
         [debounceChangeTerm] // Only call effect if debounced term changes
     );
     return <HexColorPicker color={remoteColor} onChange={setValue} />;

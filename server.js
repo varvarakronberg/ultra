@@ -101,7 +101,6 @@ io.on('connection', (socket) => {
     socket.on('shape_color_change', (color) => {
             console.log(Date(), socket.id, 'color: ' + JSON.stringify(color));
             io.emit("remote_shape_color_change", color);
-
     })
 });
 
@@ -114,9 +113,7 @@ app.use(function onError(err, req, res) {
     // The error id is attached to `res.sentry` to be returned
     // and optionally displayed to the user for support.
     res.statusCode = 500;
-    //res.end(res.sentry + '\n');
 });
-
 
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.
