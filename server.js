@@ -95,7 +95,7 @@ io.on('connection', (socket) => {
             usersState[socket.id].mouseState.y = mouse.y;
             usersState[socket.id].mouseState.active = true;
             usersState[socket.id].isInitial = false;
-            socket.broadcast.emit("remote_mouse_move", Object.values(usersState).filter(u => !u.isInital));
+            socket.broadcast.emit("remote_mouse_move", Object.values(usersState).filter(u => !u.isInitial));
         }
     });
     socket.on('shape_color_change', (color) => {
