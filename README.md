@@ -5,4 +5,4 @@ This project is a demo of [react three fiber](https://github.com/pmndrs/react-th
 
 State management is handled via [zustand](https://github.com/pmndrs/zustand).
 
-Live demo: [ultra.varvara.ca](https://ultra.varvara.ca/)
+Live demo: [ultra.varvara.ca](https://ultra.varvara.ca/) -- share this link with a friend when you open it to see the multi-user part of the UI.
